@@ -1,0 +1,7 @@
+{% extends 'master.html' %}
+    {% block body %}
+    <h1>Browse Movies</h1>
+    {% for movie in movies %}
+    <h2><a href="/movie/{{movie.id}}">{{ movie.movie_title }}</a> has {{ movie.ratings|length }} ratings</h2>
+    {% endfor %}
+{% endblock %}

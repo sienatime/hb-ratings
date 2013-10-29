@@ -1,5 +1,6 @@
-<html>
+{% extends 'master.html' %}
+    {% block body %}
 {% for user in users %}
 <h2><a href="/user/{{user.id}}">User {{ user.id }}</a>, age {{ user.age }} has {{ user.ratings|length }} ratings</h2>
 {% endfor %}
-</html>
+{% endblock %}

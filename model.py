@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 import hashlib
+import datetime
 
 engine = create_engine("sqlite:///ratings.db", echo = False)
 session = scoped_session(sessionmaker(bind = engine, autocommit=False, autoflush=False))
@@ -87,6 +88,27 @@ def get_movie_title_from_id(inp_movie_id):
 def get_all_users():
     users = session.query(User).limit(5).all()
     return users
+
+def get_all_movies():
+    movies = session.query(Movie).limit(10).all()
+    return movies
+
+def update_rating(inp_user_id, inp_movie_id, inp_rating):
+    is_rated = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).one()
+
+    if is_rated:
+        # update the rating to the new rating
+        is_rated.rating=inp_rating
+    else:
+        # add new rating object
+        rating = Rating(user_id=inp_user_id, movie_id=inp_movie_id, rating=inp_rating, timestamp = datetime.datetime.now())
+        session.add(rating)
+
+    session.commit()
+
+def get_rating_movie_user(inp_user_id, inp_movie_id):
+    rating = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).one()
+    return rating.rating
 
 def main():
     """In case we need this for something"""

@@ -77,7 +77,28 @@ def show_movie(movie_id):
 
     avg = float(all_sum)/count
 
-    return render_template("movie.html", avg=avg, movie_title=movie_title)
+    rated = model.get_rating_movie_user(session['user_id'], movie_id)
+
+    return render_template("movie.html", avg=avg, movie_title=movie_title, movie_id=movie_id, rated=rated)
+
+@app.route("/all_movies")
+def get_movies():
+    movie_list = model.get_all_movies()
+    return render_template("movies.html", movies=movie_list)
+
+@app.route("/rate", methods=["POST"])
+def rate_movie():
+    user_id = session['user_id']
+    movie_id = request.form.get("movie_id")
+    rating = request.form.get("rating")
+
+    model.update_rating(user_id, movie_id, rating)
+    return redirect(url_for("show_movie",movie_id=movie_id))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run(debug = True)

@@ -1,6 +1,21 @@
-<html>
+{% extends 'master.html' %}
+    {% block body %}
+    <h1>{{movie_title}}</h1>
 
-<h1>{{movie_title}}</h1>
+    <h2>Average Rating: {{avg}}</h2>
 
-{{avg}}
-</html>
+    {% if rated %}
+    <p><h3>Your Rating: {{rated }}</h3><p>
+    {% endif %}
+    <p>Rate this movie:</p>
+
+    <form action="/rate" method="POST" id="rating_form">
+        {% for i in range(5) %}
+            <img src="/static/graystar.png" class="graystar" id="star{{i}}">
+        {% endfor %}
+        <input type="hidden" name="movie_id" value="{{movie_id}}"></input>
+
+        <input type="hidden" name="rating" id="rating_field"></input>
+    </form>
+
+    {% endblock %}

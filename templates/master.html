@@ -2,8 +2,30 @@
 <html>
 <head>
     <title>Judgmental Eye</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='ratings.js') }}"></script>
 </head>
 <body>
+    <div id="nav">
+        <ul>
+            {% if session.get('email')%}
+            <li>Logged in as: {{ session['email']}}</li>
+            {% endif %}
+            <li><a href="/">Home</a></li>
+            <li><a href="/all_movies">Browse Movies</a></li>
+            <li><a href="/all_users">Browse Users</a></li>
+            {% if session.get('user_id')%}
+            <li><a href="/user/{{session['user_id']}}">My Ratings</a></li>
+            <li><a href="/logout">Log Out</a></li>
+            {% else %}
+            <li><a href="/register">Register</a></li>
+            <li><a href="/signin">Sign In</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+
     {% block body %}{% endblock %}
 </body>
 </html>
