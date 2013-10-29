@@ -1,0 +1,15 @@
+{% extends 'master.html' %}
+    {% block body %}
+            <form method="POST">
+                <h2>Sign In</h2>
+                {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="alert {{category}}">{{ message }}</div>
+                {% endfor %}
+                 {% for category, message in get_flashed_messages(with_categories=true) %}
+                <div class="alert {{category}}">{{ message }}</div>
+                {% endfor %}
+                <input type="text" placeholder="Email Address" name="email">
+                <input type="password" placeholder="Password" name="password">
+                <input type="submit" value="Submit">
+            </form>
+    {% endblock %}

@@ -1,0 +1,12 @@
+<html>
+
+<h1>User {{profile}}'s Rating</h1>
+
+{% for rating in ratings %}
+
+   <div class="rating">
+    <P><strong><a href="/movie/{{rating.movie_id}}">{{ rating.movie.movie_title }}</a></strong>: {{ rating.rating }}</p>
+</div>
+
+{% endfor %}
+</html>
