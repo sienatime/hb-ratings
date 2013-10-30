@@ -38,7 +38,6 @@ class Compare:
             # if we have a match (rating buddy), append that to our list of pairs/matches (aka both you and the other user rated this movie)
             if rating_buddy:
                 paired_ratings.append((rating_buddy.rating, a_rating.rating))
-
         # if we have any paired ratings, pass them to the pearson correlation
         if paired_ratings:
             return correlation.pearson(paired_ratings)
