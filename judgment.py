@@ -57,8 +57,13 @@ def sign_in():
 
 @app.route("/all_users")
 def get_users():
-    user_list = model.get_all_users()
+    user_list = model.get_all_users(0)
     return render_template("user_list.html", users=user_list)
+
+@app.route("/more_users/<offset>")
+def get_more_users(offset):
+    user_list = model.get_all_users(int(offset))
+    return render_template("more_users.html", users=user_list)
 
 @app.route("/user/<user_id>")
 def get_profile(user_id):
@@ -97,8 +102,13 @@ def get_judgment():
 
 @app.route("/all_movies")
 def get_movies():
-    movie_list = model.get_all_movies()
+    movie_list = model.get_all_movies(0)
     return render_template("movies.html", movies=movie_list)
+
+@app.route("/more_movies/<offset>")
+def get_more_movies(offset):
+    movie_list = model.get_all_movies(int(offset))
+    return render_template("more_movies.html", movies=movie_list)
 
 @app.route("/rate", methods=["POST"])
 def rate_movie():

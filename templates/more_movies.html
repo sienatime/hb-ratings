@@ -1,0 +1,3 @@
+{% for movie in movies %}
+    <h2><a href="/movie/{{movie.id}}">{{ movie.movie_title }}</a> has {{ movie.ratings|length }} ratings</h2>
+    {% endfor %}

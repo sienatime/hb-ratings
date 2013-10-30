@@ -1,7 +1,57 @@
 body{
     background: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+body, input{
+    font-family: 'Open Sans', sans-serif;
 }
 
 .graystar{
     cursor: pointer;
+}
+
+#nav, #content{
+    float: left;
+    padding: 20px;
+}
+
+#header{
+    padding: 20px;
+}
+
+h1, h2, h3, h4{
+    margin-top: 0;   
+}
+
+h1{
+    font-family: 'Underdog', cursive;
+}
+
+.form{
+    width: 250px;
+}
+
+.form input[type=text], .form input[type=password], #search input[type=text]{
+    padding: 3px;
+    border-radius: 4px;
+    border: 1px solid gray;
+}
+
+#search input[type=text]{
+    width: 200px;
+    margin-left: 50px;
+}
+
+.form input[type=submit]{
+    display: block;
+}
+
+#site_info, #search_container{
+    float: left;
+}
+
+.clearfix{
+    clear: both;
 }

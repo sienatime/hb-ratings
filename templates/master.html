@@ -5,13 +5,28 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='ratings.js') }}"></script>
+    <link href='http://fonts.googleapis.com/css?family=Underdog|Open+Sans' rel='stylesheet' type='text/css'>
 </head>
 <body>
-    <div id="nav">
-        <ul>
-            {% if session.get('email')%}
-            <li>Logged in as: {{ session['email']}}</li>
+    <div id="header">
+        <div id="site_info">
+        <h1>The Eye of Judgment</h1>
+        {% if session.get('email')%}
+            <p>Logged in as: {{ session['email']}}</p>
             {% endif %}
+        </div>
+        <div id="search_container">
+            <form action="/searchresults" id="search">
+            <input type="text" placeholder="Search for a movie title" name="search">
+            <input type="submit" value="Search">
+        </form>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div id="nav">
+        <img src="/static/christianevileye.gif" width=195>
+        <ul>
+            
             <li><a href="/">Home</a></li>
             <li><a href="/all_movies">Browse Movies</a></li>
             <li><a href="/all_users">Browse Users</a></li>
@@ -23,14 +38,10 @@
             <li><a href="/signin">Sign In</a></li>
             {% endif %}
         </ul>
-
-        <form action="/searchresults">
-        <input type="text" placeholder="Search for a movie title" name="search">
-        <input type="submit" value="Search">
-        </form>
     </div>
 
-
+    <div id="content">
     {% block body %}{% endblock %}
+    </div>
 </body>
 </html>

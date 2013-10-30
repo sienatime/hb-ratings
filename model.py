@@ -164,12 +164,12 @@ def get_movie_title_from_id(inp_movie_id):
     movie_title = session.query(Movie).filter_by(id=inp_movie_id).one()
     return movie_title.movie_title
 
-def get_all_users():
-    users = session.query(User).limit(5).all()
+def get_all_users(start):
+    users = session.query(User).filter( User.id <= start+20, User.id > start).all()
     return users
 
-def get_all_movies():
-    movies = session.query(Movie).limit(10).all()
+def get_all_movies(start):
+    movies = session.query(Movie).filter( Movie.id <= start+20, Movie.id > start).all()
     return movies
 
 def update_rating(inp_user_id, inp_movie_id, inp_rating):

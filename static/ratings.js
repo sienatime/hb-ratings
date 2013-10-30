@@ -1,24 +1,15 @@
+var _throttleTimer = null;
+var _throttleDelay = 100;
+var offset = 0;
+
 $( document ).ready(function(){
+
+    $(window)
+        .off('scroll', ScrollHandler)
+        .on('scroll', ScrollHandler);
 
   /* if the page we are on is a movie page, do the ajax request for prediction data*/
   if (document.location.href.indexOf("movie/") != -1){
-    console.log("i'm running the ajax call");
-    var loc = document.location.href;
-    var tokens = loc.split("/");
-    m_id = tokens[4];
-    $.ajax({
-        type: "GET",
-        url: "/getjudgment",
-        data: { movie_id : m_id }
-      })
-        .done(function( msg ) {
-          $('#stuffwegetwithajax').replaceWith(msg);
-        });
-    }
-
-    // deal with this laterrrr
-    if (document.location.href.indexOf("movie/") != -1){
-    console.log("i'm running the ajax call");
     var loc = document.location.href;
     var tokens = loc.split("/");
     m_id = tokens[4];
@@ -57,3 +48,39 @@ $( document ).ready(function(){
         $('#rating_form').submit();
    });
 });
+
+function ScrollHandler(e) {
+    //throttle event:
+    clearTimeout(_throttleTimer);
+    _throttleTimer = setTimeout(function () {
+
+        if (document.location.href.indexOf("all_users") != -1){
+            //do work
+            if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+                offset += 20;
+                $.ajax({
+                type: "GET",
+                url: "/more_users/"+offset
+              })
+                .done(function( msg ) {
+                  $('#users').append(msg);
+                });
+            }
+        }
+
+         if (document.location.href.indexOf("all_movies") != -1){
+            //do work
+            if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+                offset += 20;
+                $.ajax({
+                type: "GET",
+                url: "/more_movies/"+offset
+              })
+                .done(function( msg ) {
+                  $('#movies').append(msg);
+                });
+            }
+        }
+
+    }, _throttleDelay);
+}
