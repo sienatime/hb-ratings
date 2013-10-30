@@ -6,6 +6,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 import hashlib
 import datetime
+import correlation
 
 engine = create_engine("sqlite:///ratings.db", echo = False)
 session = scoped_session(sessionmaker(bind = engine, autocommit=False, autoflush=False))
@@ -15,7 +16,37 @@ Base.query = session.query_property()
 
 ### Class declarations go here
 
-class User(Base):
+class Compare:
+
+    def similarity(self, other):
+        user_ratings = {}
+        # this will be a list of the ratings both self and other (user) have made where they match for the same movie
+        paired_ratings = []
+        for one_rating in self.ratings:
+            # here we are putting a rating into our dictionary (the key is the movie title) and the value is the rating object (from our list)
+            if isinstance(self, User):
+                user_ratings[one_rating.movie_id] = one_rating
+            if isinstance(self, Movie):
+                user_ratings[one_rating.user_id] = one_rating
+
+        for a_rating in other.ratings:
+            # for each rating of the other user, check to see if our user has rated it (aka it's in the dictionary we just made.) this is our "rating buddy". If it's there, it'll be a rating object.
+            if isinstance(self, User):
+                rating_buddy = user_ratings.get(a_rating.movie_id)
+            if isinstance(self, Movie):
+                rating_buddy = user_ratings.get(a_rating.user_id)
+            # if we have a match (rating buddy), append that to our list of pairs/matches (aka both you and the other user rated this movie)
+            if rating_buddy:
+                paired_ratings.append((rating_buddy.rating, a_rating.rating))
+
+        # if we have any paired ratings, pass them to the pearson correlation
+        if paired_ratings:
+            return correlation.pearson(paired_ratings)
+        # otherwise return 0 (no correlation?)
+        else:
+            return 0.0
+
+class User(Base, Compare):
     __tablename__ = "users"
 
     id = Column(Integer(), primary_key = True)
@@ -24,7 +55,53 @@ class User(Base):
     age = Column(Integer(),nullable = True)
     zipcode = Column(String(15), nullable=True)
 
-class Movie(Base):
+
+    def predict_rating(self, movie):
+        # my_ratings = self.ratings
+        other_ratings = movie.ratings
+        # find the similaritiy b/t yourself and the other user for a_rating (in other_ratings), then put the similarity number and the rating itself in a tuple and put it in the similarities list
+        similarities = [(self.similarity(a_rating.user), a_rating) for a_rating in other_ratings]
+        # reverse=True puts the larger elements at the beginning of the list
+        similarities.sort(reverse=True)
+        # rewrite the list with only positive (>0) similarity scores so that later when we multiply, we stay within 1-5 range.
+        similarities = [similar for similar in similarities if similar[0] > 0]
+        if not similarities:
+            return None
+        # multiply the rating * similarity score for all the tuples in similarities, then sum those.
+        numerator = sum([a_rating.rating * similarity for similarity, a_rating in similarities])
+        # sum all the similarity scores
+        denominator = sum([similarity[0] for similarity in similarities])
+        return numerator/denominator
+
+    def predict_rating_with_my_movies(self, movie):
+        # take all the movies you've rated and find out which movie this movie is most similar to
+        # multiply your rating of that movie by the similarity of that movie
+        
+        my_ratings = self.ratings
+        # returns a list of tuples of all rating pairs (similarity score for 2 movies, rating)
+        # similarities = [ movie.similarity(a_rating.movie) for a_rating in my_ratings ]
+
+        similarities = []
+        for a_rating in my_ratings:
+            # get the similarity score for each movie you've rated compared to movie
+            similarities.append( (movie.similarity(a_rating.movie), a_rating.movie, a_rating.rating) )
+
+        similarities.sort(reverse=True)
+        # print "this is similarities before we take out negatives", similarities
+        # similarities = [similar for similar in similarities if similar[0] > 0]
+        # if not similarities:
+        #     print "returning none"
+        #     return None
+        # numerator = sum([a_rating.rating * similarity for similarity, a_rating in similarities])
+        # denominator = sum([similarity[0] for similarity in similarities])
+        # return numerator/denominator
+        most_similar = similarities[0][1]
+        most_similar_rating = similarities[0][2]
+
+        return most_similar_rating * movie.similarity(most_similar)
+
+
+class Movie(Base, Compare):
     __tablename__ = "movies"
 
     id = Column(Integer(), primary_key = True)
@@ -94,7 +171,7 @@ def get_all_movies():
     return movies
 
 def update_rating(inp_user_id, inp_movie_id, inp_rating):
-    is_rated = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).one()
+    is_rated = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).first()
 
     if is_rated:
         # update the rating to the new rating
@@ -107,8 +184,14 @@ def update_rating(inp_user_id, inp_movie_id, inp_rating):
     session.commit()
 
 def get_rating_movie_user(inp_user_id, inp_movie_id):
-    rating = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).one()
-    return rating.rating
+    rating = session.query(Rating).filter_by(user_id=inp_user_id, movie_id=inp_movie_id).first()
+    return rating
+
+def search_by_title(title):
+    title_search = session.query(Movie).filter(Movie.movie_title.like("%"+title+"%")).all()
+    return title_search
+
+
 
 def main():
     """In case we need this for something"""

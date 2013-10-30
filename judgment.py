@@ -28,7 +28,8 @@ def new_user():
             return redirect(url_for("signin"))
         else:
             model.add_user(email, pwd, age, zipcode)
-            redirect(url_for("signin"))
+            flash("Thanks for registering! Please sign in.","success")
+            return redirect(url_for("signin"))
     elif pwd != verify_pwd:
         flash("Passwords must match.","error")
         return redirect(url_for("register"))
@@ -49,7 +50,7 @@ def sign_in():
         flash("Signed in.")
         session['email'] = email
         session['user_id'] = model.get_id_by_email(email)
-        return render_template("home.html")
+        return redirect(url_for("get_profile", user_id=session['user_id']))
     else:
         flash("Your email and password didn't match our records. Please sign in.")
         return redirect(url_for("signin"))
@@ -99,6 +100,17 @@ def rate_movie():
 def logout():
     session.clear()
     return redirect(url_for("index"))
+
+@app.route("/searchresults")
+def search_movies():
+    title = request.args.get("search")
+    results = model.search_by_title(title)
+
+    if len(results) == 1:
+        movie_id = results[0].id
+        return redirect(url_for("show_movie",movie_id=movie_id))
+    else:
+        return render_template("results.html", results=results)
 
 if __name__ == "__main__":
     app.run(debug = True)
