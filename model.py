@@ -80,24 +80,27 @@ class User(Base, Compare):
         # returns a list of tuples of all rating pairs (similarity score for 2 movies, rating)
         # similarities = [ movie.similarity(a_rating.movie) for a_rating in my_ratings ]
 
-        similarities = []
-        for a_rating in my_ratings:
-            # get the similarity score for each movie you've rated compared to movie
-            similarities.append( (movie.similarity(a_rating.movie), a_rating.movie, a_rating.rating) )
+        if self.ratings:
+            similarities = []
+            for a_rating in my_ratings:
+                # get the similarity score for each movie you've rated compared to movie
+                similarities.append( (movie.similarity(a_rating.movie), a_rating.movie, a_rating.rating) )
 
-        similarities.sort(reverse=True)
-        # print "this is similarities before we take out negatives", similarities
-        # similarities = [similar for similar in similarities if similar[0] > 0]
-        # if not similarities:
-        #     print "returning none"
-        #     return None
-        # numerator = sum([a_rating.rating * similarity for similarity, a_rating in similarities])
-        # denominator = sum([similarity[0] for similarity in similarities])
-        # return numerator/denominator
-        most_similar = similarities[0][1]
-        most_similar_rating = similarities[0][2]
+            similarities.sort(reverse=True)
+            # print "this is similarities before we take out negatives", similarities
+            # similarities = [similar for similar in similarities if similar[0] > 0]
+            # if not similarities:
+            #     print "returning none"
+            #     return None
+            # numerator = sum([a_rating.rating * similarity for similarity, a_rating in similarities])
+            # denominator = sum([similarity[0] for similarity in similarities])
+            # return numerator/denominator
+            most_similar = similarities[0][1]
+            most_similar_rating = similarities[0][2]
 
-        return most_similar_rating * movie.similarity(most_similar)
+            return most_similar_rating * movie.similarity(most_similar)
+        else:
+            return 0
 
 
 class Movie(Base, Compare):
@@ -190,7 +193,50 @@ def search_by_title(title):
     title_search = session.query(Movie).filter(Movie.movie_title.like("%"+title+"%")).all()
     return title_search
 
+def judgment(user_id, movie_id):
+    user = session.query(User).filter_by(id=user_id).first()
+    movie = session.query(Movie).filter_by(id=movie_id).first()
+    user_rating = session.query(Rating).filter_by(movie_id=movie_id,user_id=user_id).first()
 
+    prediction = None
+    prediction_when_not_rated = None
+
+    if not user_rating:
+        prediction = user.predict_rating_with_my_movies(movie)
+        effective_rating = prediction
+        prediction_when_not_rated = effective_rating
+    else:
+        effective_rating = user_rating.rating
+
+    
+    the_eye = session.query(User).filter_by(email="theeye@ofjudgment.com").one()
+    eye_rating = session.query(Rating).filter_by(user_id=the_eye.id, movie_id=movie.id).first()
+
+    if not eye_rating:
+        eye_rating = the_eye.predict_rating(movie)
+    else:
+        eye_rating = eye_rating.rating
+
+    difference = abs(eye_rating - effective_rating)
+
+    messages = [ "I suppose you don't have such bad taste after all.",
+             "I regret every decision that I've ever made that has brought me to listen to your opinion.",
+             "Words fail me, as your taste in movies has clearly failed you.",
+             "That movie is great. For a clown to watch. Idiot.",
+             "You are the worst person to ever live."]
+
+    print difference
+
+    beratement = messages[int(difference)]
+
+    return beratement, prediction_when_not_rated
+
+def rounding(decimal):
+    base = int(decimal)
+    if decimal - base >= 0.5:
+        return base+1
+    else:
+        return base
 
 def main():
     """In case we need this for something"""

@@ -1,12 +1,19 @@
 {% extends 'master.html' %}
     {% block body %}
+
+
     <h1>{{movie_title}}</h1>
 
-    <h2>Average Rating: {{avg}}</h2>
+    <h2>Average Rating: {{avg}} stars</h2>
 
     {% if rated %}
     <p><h3>Your Rating: {{rated.rating }}</h3><p>
     {% endif %}
+
+    <div id="stuffwegetwithajax">
+        <img src="/static/loading.gif">
+    </div>
+
     <p>Rate this movie:</p>
 
     <form action="/rate" method="POST" id="rating_form">

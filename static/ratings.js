@@ -1,4 +1,37 @@
 $( document ).ready(function(){
+
+  /* if the page we are on is a movie page, do the ajax request for prediction data*/
+  if (document.location.href.indexOf("movie/") != -1){
+    console.log("i'm running the ajax call");
+    var loc = document.location.href;
+    var tokens = loc.split("/");
+    m_id = tokens[4];
+    $.ajax({
+        type: "GET",
+        url: "/getjudgment",
+        data: { movie_id : m_id }
+      })
+        .done(function( msg ) {
+          $('#stuffwegetwithajax').replaceWith(msg);
+        });
+    }
+
+    // deal with this laterrrr
+    if (document.location.href.indexOf("movie/") != -1){
+    console.log("i'm running the ajax call");
+    var loc = document.location.href;
+    var tokens = loc.split("/");
+    m_id = tokens[4];
+    $.ajax({
+        type: "GET",
+        url: "/getjudgment",
+        data: { movie_id : m_id }
+      })
+        .done(function( msg ) {
+          $('#stuffwegetwithajax').replaceWith(msg);
+        });
+    }
+
    $(".graystar").mouseenter(function(){
         /* get the index of this star (via ID), then put it in a loop that turns it and all previous stars blue. */
         var star = $(this).attr("id");

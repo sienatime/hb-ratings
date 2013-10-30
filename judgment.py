@@ -78,9 +78,22 @@ def show_movie(movie_id):
 
     avg = float(all_sum)/count
 
+    avg = model.rounding(avg)
+
     rated = model.get_rating_movie_user(session['user_id'], movie_id)
 
     return render_template("movie.html", avg=avg, movie_title=movie_title, movie_id=movie_id, rated=rated)
+
+@app.route("/getjudgment")
+def get_judgment():
+    movie_id = request.args.get('movie_id')
+
+    judgy, prediction = model.judgment(session['user_id'], movie_id)
+
+    if prediction:
+        prediction = model.rounding(prediction)
+
+    return render_template("ajaxy.html", prediction=prediction, judgy=judgy)
 
 @app.route("/all_movies")
 def get_movies():
