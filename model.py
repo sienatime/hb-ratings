@@ -78,7 +78,6 @@ class User(Base, Compare):
         
         my_ratings = self.ratings
         # returns a list of tuples of all rating pairs (similarity score for 2 movies, rating)
-        # similarities = [ movie.similarity(a_rating.movie) for a_rating in my_ratings ]
 
         if self.ratings:
             similarities = []
@@ -87,14 +86,6 @@ class User(Base, Compare):
                 similarities.append( (movie.similarity(a_rating.movie), a_rating.movie, a_rating.rating) )
 
             similarities.sort(reverse=True)
-            # print "this is similarities before we take out negatives", similarities
-            # similarities = [similar for similar in similarities if similar[0] > 0]
-            # if not similarities:
-            #     print "returning none"
-            #     return None
-            # numerator = sum([a_rating.rating * similarity for similarity, a_rating in similarities])
-            # denominator = sum([similarity[0] for similarity in similarities])
-            # return numerator/denominator
             most_similar = similarities[0][1]
             most_similar_rating = similarities[0][2]
 
@@ -209,7 +200,7 @@ def judgment(user_id, movie_id):
     eye_rating = session.query(Rating).filter_by(user_id=the_eye.id, movie_id=movie.id).first()
 
     if not eye_rating:
-        eye_rating = the_eye.predict_rating(movie)
+        eye_rating = the_eye.predict_rating_with_my_movies(movie)
     else:
         eye_rating = eye_rating.rating
 
