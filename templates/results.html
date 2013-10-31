@@ -3,9 +3,9 @@
 
     <h1>Search Results</h1>
 
-    <ul>
+    <ul class="listitems">
     {% for result in results %}
-        <li><a href="/movie/{{result.id}}">{{result.movie_title}}</a></li>
+        <li class="{{ loop.cycle('odd', 'even') }}"><a href="/movie/{{result.id}}">{{result.movie_title}}</a></li>
     {% endfor %}
     </ul>
 

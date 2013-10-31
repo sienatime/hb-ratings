@@ -1,11 +1,25 @@
 body{
-    background: #f7f7f7;
+    background: black url("/static/creepyforestpeople.jpg") no-repeat;
     margin: 0;
     padding: 0;
 }
 
 body, input{
     font-family: 'Open Sans', sans-serif;
+}
+
+a{
+    color: #00a1d9;
+}
+
+a:hover{
+    color: #00797d;
+}
+
+
+#whole_container{
+    width: 800px;
+    margin: 10px;
 }
 
 .graystar{
@@ -17,8 +31,23 @@ body, input{
     padding: 20px;
 }
 
+#content{
+    width: 485px;
+}
+
+#nav{
+    margin-right: 10px;
+}
+
 #header{
     padding: 20px;
+    margin-bottom: 10px;
+}
+
+#header, #content, #nav{
+    background: #f7f7f7;
+    overflow: hidden;
+    
 }
 
 h1, h2, h3, h4{
@@ -54,4 +83,28 @@ h1{
 
 .clearfix{
     clear: both;
+}
+
+#theeye{
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid black;
+}
+
+ul.listitems{
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul.listitems li{
+    padding: 5px 0;
+}
+
+.odd{
+    background: rgb(230, 232, 235);
+}
+
+#eye_container, #rate{
+    text-align: center;
 }

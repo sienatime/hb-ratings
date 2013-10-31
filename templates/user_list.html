@@ -1,9 +1,11 @@
 {% extends 'master.html' %}
     {% block body %}
     <div id="users">
+        <ul id="userlist" class="listitems">
 {% for user in users %}
-<h2><a href="/user/{{user.id}}">User {{ user.id }}</a>: age {{ user.age }}, has {{ user.ratings|length }} ratings</h2>
+<li class="{{ loop.cycle('odd', 'even') }}"><a href="/user/{{user.id}}">User {{ user.id }}</a>: age {{ user.age }}, has {{ user.ratings|length }} ratings</li>
 
 {% endfor %}
+</ul>
 </div>
 {% endblock %}

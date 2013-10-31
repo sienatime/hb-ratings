@@ -10,10 +10,13 @@
     <p><h3>Your Rating: {{rated.rating }}</h3><p>
     {% endif %}
 
-    <div id="stuffwegetwithajax">
-        <img src="/static/loading.gif">
+    <div id="theeye">
+        <div id="eye_container">
+            <img src="/static/loadingeye.gif" width="32">
+        </div>
     </div>
 
+<div id="rate">
     <p>Rate this movie:</p>
 
     <form action="/rate" method="POST" id="rating_form">
@@ -24,5 +27,6 @@
 
         <input type="hidden" name="rating" id="rating_field"></input>
     </form>
+</div>
 
     {% endblock %}

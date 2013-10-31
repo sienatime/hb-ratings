@@ -2,8 +2,10 @@
     {% block body %}
     <h1>Browse Movies</h1>
     <div id="movies">
+        <ul id="movielist" class="listitems">
     {% for movie in movies %}
-    <h2><a href="/movie/{{movie.id}}">{{ movie.movie_title }}</a> has {{ movie.ratings|length }} ratings</h2>
+    <li class="{{ loop.cycle('odd', 'even') }}"><a href="/movie/{{movie.id}}">{{ movie.movie_title }}</a> has {{ movie.ratings|length }} ratings</li>
     {% endfor %}
+        </ul>
     </div>
 {% endblock %}

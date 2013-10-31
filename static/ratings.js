@@ -8,6 +8,14 @@ $( document ).ready(function(){
         .off('scroll', ScrollHandler)
         .on('scroll', ScrollHandler);
 
+    if  ($(window).height() == $(document).height()){
+         if (document.location.href.indexOf("all_movies") != -1){
+            loadMoreMovies();
+         }else if(document.location.href.indexOf("all_users") != -1){
+            loadMoreUsers();
+         }
+    }
+
   /* if the page we are on is a movie page, do the ajax request for prediction data*/
   if (document.location.href.indexOf("movie/") != -1){
     var loc = document.location.href;
@@ -19,7 +27,7 @@ $( document ).ready(function(){
         data: { movie_id : m_id }
       })
         .done(function( msg ) {
-          $('#stuffwegetwithajax').replaceWith(msg);
+          $('#theeye').html(msg);
         });
     }
 
@@ -57,30 +65,38 @@ function ScrollHandler(e) {
         if (document.location.href.indexOf("all_users") != -1){
             //do work
             if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-                offset += 20;
-                $.ajax({
-                type: "GET",
-                url: "/more_users/"+offset
-              })
-                .done(function( msg ) {
-                  $('#users').append(msg);
-                });
+               loadMoreUsers();
             }
         }
 
          if (document.location.href.indexOf("all_movies") != -1){
             //do work
-            if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
-                offset += 20;
-                $.ajax({
-                type: "GET",
-                url: "/more_movies/"+offset
-              })
-                .done(function( msg ) {
-                  $('#movies').append(msg);
-                });
+            if ($(window).scrollTop() + $(window).height() > $(document).height() - 100)  {
+                loadMoreMovies();
             }
         }
 
     }, _throttleDelay);
+}
+
+function loadMoreMovies(){
+    offset += 20;
+    $.ajax({
+    type: "GET",
+    url: "/more_movies/"+offset
+  })
+    .done(function( msg ) {
+      $('#movielist').append(msg);
+    });
+}
+
+function loadMoreUsers(){
+     offset += 20;
+    $.ajax({
+    type: "GET",
+    url: "/more_users/"+offset
+    })
+    .done(function( msg ) {
+      $('#userlist').append(msg);
+    });
 }
