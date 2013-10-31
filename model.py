@@ -160,10 +160,6 @@ def get_ratings_for_movie(inp_movie):
     ratings = session.query(Rating).filter_by(movie_id=inp_movie).all()
     return ratings
 
-def get_movie_title_from_id(inp_movie_id):
-    movie_title = session.query(Movie).filter_by(id=inp_movie_id).one()
-    return movie_title.movie_title
-
 def get_all_users(start):
     users = session.query(User).filter( User.id <= start+20, User.id > start).all()
     return users
@@ -230,6 +226,10 @@ def judgment(user_id, movie_id):
     beratement = messages[int(difference)]
 
     return beratement, prediction_when_not_rated
+
+def get_movie(inp_movie_id):
+    movie = session.query(Movie).filter_by(id=inp_movie_id).first()
+    return movie
 
 def rounding(decimal):
     base = int(decimal)

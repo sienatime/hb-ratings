@@ -2,7 +2,7 @@
     {% block body %}
 
 
-    <h1>{{movie_title}}</h1>
+    <h1><a href="{{movie_object.imdb_url}}">{{movie_object.movie_title}}</a></h1>
 
     <h2>Average Rating: {{avg}} stars</h2>
 
@@ -23,7 +23,7 @@
         {% for i in range(5) %}
             <img src="/static/graystar.png" class="graystar" id="star{{i}}">
         {% endfor %}
-        <input type="hidden" name="movie_id" value="{{movie_id}}"></input>
+        <input type="hidden" name="movie_id" value="{{movie_object.id}}"></input>
 
         <input type="hidden" name="rating" id="rating_field"></input>
     </form>

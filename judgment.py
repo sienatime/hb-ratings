@@ -73,7 +73,7 @@ def get_profile(user_id):
 @app.route("/movie/<movie_id>")
 def show_movie(movie_id):
     ratings = model.get_ratings_for_movie(movie_id)
-    movie_title = model.get_movie_title_from_id(movie_id)
+    movie_object = model.get_movie(movie_id)
 
     all_sum = 0
     count = 0
@@ -87,7 +87,7 @@ def show_movie(movie_id):
 
     rated = model.get_rating_movie_user(session['user_id'], movie_id)
 
-    return render_template("movie.html", avg=avg, movie_title=movie_title, movie_id=movie_id, rated=rated)
+    return render_template("movie.html", avg=avg, movie_object=movie_object, rated=rated)
 
 @app.route("/getjudgment")
 def get_judgment():
